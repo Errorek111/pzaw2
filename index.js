@@ -3,8 +3,8 @@ import fs from "node:fs";
 
 const port = 8000;
 
-const index_html = fs.readFileSync("/public/index.html");
-const favicon_ico = fs.readFileSync("./public/favicon.ico");
+const index_html = fs.readFileSync("/home/ernest/pzaw2/public/index.html");
+const favicon_ico = fs.readFileSync("/home/ernest/pzaw2/public/favicon.ico");
 
 const server = http.createServer(function (req, res) {
   if (req.url && req.url === "/") {
