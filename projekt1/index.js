@@ -1,29 +1,58 @@
-import http from "node:http";
+import { createServer } from "node:http";
+import { readFileSync } from "node:fs";
 import fs from "node:fs";
-
-const port = 8000;
+import { URL } from "node:url";
 
 const index_html = fs.readFileSync("./public/index.html");
 const favicon_ico = fs.readFileSync("./public/favicon.ico");
+const pathConfigs = [
+  {
+    path: "/",
+    allowed_methods: ["GET"],
+    handler: (req, res) => {
+      res.writeHead(200, { "Content-Type": "text/html" });
+      res.end(index_html);
+    },
+  },
+  {
+    path: "/favicon.ico",
+    allowed_methods: ["GET"],
+    handler: (req, res) => {
+      res.writeHead(200, {"Content-Type": "image/vnd.microsoft.icon"});
+      res.end(favicon_ico);
+    },
+  },
+];
 
-const server = http.createServer(function (req, res) {
-  if (req.url && req.url === "/") {
-    res.statusCode = 200;
-    res.setHeader("Content-Type", "text/html");
-    res.end(index_html);
+const server = createServer((req, res) => {
+  const request_url = new URL(`http://${host}${req.url}`);
+  const path = request_url.pathname;
+  console.log(`Request: ${req.method} ${path}`);
+  for (let config of pathConfigs) {
+    if (path === config.path) {
+      if (config.allowed_methods.includes(req.method)) {
+        config.handler(req, res);
+      } else {
+        res.writeHead(405, { "Content-Type": "text/plain" });
+        res.end("Method not allowed\n");        
+      }
+      break;
+    }
   }
-
-  if (req.url && req.url === "/favicon.ico") {
-    res.statusCode = 200;
-    res.setHeader("Content-Type", "image/vnd.microsoft.icon");
-    res.end(favicon_ico);
+  if (!res.writableEnded) {
+    res.writeHead(404, { "Content-Type": "text/plain" });
+    res.end("Site not found!\n");
   }
-
-
-  // Unknown request
-  res.statusCode = 404;
-  res.end();
 });
+const port = 8000;
 
-server.listen(port);
-console.log(`Server listening on port http://localhost:${port}`);
+const host = "localhost";
+
+
+// Start the server
+
+server.listen(port, host, () => {
+
+  console.log(`Server listening on http://${host}:${port}`);
+
+});
