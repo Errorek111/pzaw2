@@ -3,8 +3,8 @@ import fs from "node:fs";
 
 const port = 8000;
 
-const index_html = fs.readFileSync("/home/ernest/pzaw2/public/index.html");
-const favicon_ico = fs.readFileSync("/home/ernest/pzaw2/public/favicon.ico");
+const index_html = fs.readFileSync("./public/index.html");
+const favicon_ico = fs.readFileSync("./public/favicon.ico");
 
 const server = http.createServer(function (req, res) {
   if (req.url && req.url === "/") {
@@ -19,19 +19,6 @@ const server = http.createServer(function (req, res) {
     res.end(favicon_ico);
   }
 
-  if (req.url && req.url === "/json") {
-    const content = {
-      message: "Hello there",
-      time: Intl.DateTimeFormat("pl", {
-        dateStyle: "full",
-        timeStyle: "long",
-        timeZone: "CET",
-      }).format(Date.now()),
-    };
-    res.statusCode = 200;
-    res.setHeader("Content-Type", "application/json");
-    res.end(JSON.stringify(content));
-  }
 
   // Unknown request
   res.statusCode = 404;
