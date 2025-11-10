@@ -10,7 +10,7 @@ const data = {
         ["0","0","0","0","0","0","0","0"],
     ],
     "buildings": [
-        { name: "Home", mapSign :"H" },
+        { name: "House", mapSign :"H" },
         { name :"Road", mapSign :"R" },
     ],
 }
