@@ -1,5 +1,15 @@
 <%- include("header.ejs") %>
-<p><%= text %></p>
-<%- include("input.ejs") %>
+<table>
+    <tbody>
+      <% board.forEach((row, rowIndex) => { %>
+        <tr>
+          <% row.forEach((cell, colIndex) => { %>
+              <td>[<%= cell %>]</td>
+          <% }) %>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+<%- include("addBuilding.ejs") %>
 </body>
 </html>

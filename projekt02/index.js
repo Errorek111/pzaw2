@@ -1,5 +1,5 @@
 import express from "express";
-import data, { getData } from "./data.js";
+import data, { addBuilding, getData } from "./data.js";
 //ponieważ używam 2 (tak naprawde to 3) różnych locahostów musze mieć różne porty
 const port = 2137;
 const app = express();
@@ -8,12 +8,29 @@ app.use(express.static("public"));
 app.use(express.urlencoded());
 
 app.get("/", (req, res) =>{
+    const board = getData()
     res.render("main-page",{
-        text: getData(),
+        board,
     });
 });
 app.post("/input", (req, res) =>{
-    data.addData(req.body.input);
+    var errors = data.validateBuilingTypeAndPosition(req.body.x,req.body.y,req.body.buildingType);
+    if(errors.length == 0){
+        addBuilding(req.body.x,req.body.y,req.body.buildingType);    
+        res.redirect("/");
+    }
+    else{
+        res.render("addBuildingError",{
+            errors,
+        });
+    }
+});
+app.get("/about", (req, res) =>{
+    res.render("about",{
+
+    });
+});
+app.get("/redirect", (req, res) =>{
     res.redirect("/");
 });
 
