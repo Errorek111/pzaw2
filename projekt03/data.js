@@ -13,14 +13,15 @@ col4 text not null default [0]);
 CREATE TABLE IF NOT EXISTS buildings (
 id integer primary key autoincrement,
 name text not null,
+symbol text not null,
 income real not null,
 upkeep real not null
 );
 create table if not exists placement_rules(
 id integer primary key autoincrement,
-builling_id integer not null references buildings(id) on delete no action,
+builling_id integer not null, 
 rule text not null,
-rule_building_id integer references buildings(id) on delete no action
+rule_building_id integer
 )`
 //rule_building_id może nie mieć sensu w nazwie ale służy do rozpoznania budynku z którym zasada jest związana np większośc budynków musi być obok ulicy
 );
@@ -33,10 +34,11 @@ if (process.env.NEW_GAME) {
         createRow.all();
     }
     const addBuildings = db.prepare(
-        `INSERT INTO buildings VALUES (null,'House',4.5,2.5);
-        INSERT INTO buildings VALUES (null,'Road',0,0.5);`
+        `INSERT INTO buildings VALUES (null,'House','H',4.5,2.5),
+    (null,'Road','R',0,0.5);`
     )
     addBuildings.all();
+    
     const createBuildingRules = db.prepare(
         `INSERT INTO placement_rules VALUES(null,1,'must_be_next_to',2);`
     )
@@ -48,8 +50,18 @@ const db_ops = {
     ),
     get_buildings: db.prepare(
         `SELECT name FROM buildings;`
-    )
+    ),
+    get_buidling_sign: db.prepare(
+        `select symbol from buildings where name = ?`
+    ),
 };
+function boardTile(x,y){
+    var col = "col"+y.toString();
+    const query = db.prepare(
+        `SELECT ${col} from board where id = ?`
+    );
+    return query.all(x)[0][col];
+}
 function ColNames(table){
     const stmt = db.prepare(
         `PRAGMA table_info(${table});`
@@ -84,49 +96,65 @@ export function validateBuilingTypeAndPosition(x,y,inputString){
         errors.push("y musi być typu int");
     }
     else{   
-        if(y>data.board[j].length-1){
+        if(y>boardSizeY){
             errors.push("y poza rozmiarem planszy");
         }
     }
     var counter = 0;
+    var temp = db_ops.get_buildings.all();
+    var buildings = [];
+    for(var i=0;i<temp.length;i++){
+        buildings.push(temp[i]["name"]);
+    }
     if(parseInt(inputString).toString() == "NaN"){
-        for(var i=0;i<data.buildings.length;i++){
-            if(inputString != data.buildings[i].name){
-                counter++;
-            }
-            else{
-                break;
-            }
+        if(!buildings.includes(inputString)){
+            errors.push("budynek nie istneje");
         }
     }
     else{
         errors.push("nazwa budynku jest liczbą a ma być stringiem");
     }
-    if(counter == data.buildings.length){
-        errors.push("budynek nie istneje");
-    }       
-    if(data.board[x][y] != 0){
+    if(boardTile(x,y) != '0'){
         errors.push("na tym polu już coś jest");
     }
     return errors;
 };
 export function addBuilding(x,y,inputString){
-    var dbX = parseInt(x);
-    var dbY = parseInt(y);
-    var buildingID;
-    for(var i=0;i<data.buildings.length;i++){
-        if(inputString == data.buildings[i].name){
-            var buildingID = i;
-            break;
-        }
-    }
-    var colName = "col"+dbY.toString();
+    var building = db_ops.get_buidling_sign.all(inputString)[0]["symbol"];
+    var colName = "col"+y.toString();
     var colNames = ColNames('board');
     if(colNames.includes(colName)){
         const addBld = db.prepare(
             `UPDATE board SET ${colName} = ? WHERE id = ?`
         )
-        addBld.all('H',dbX);
+        addBld.all(building,parseInt(x));
+    }
+}
+export function removeBuilding(x,y){
+    var errors = [];
+    var boardSizeX = db_ops.get_board.all().length;
+    var boardSizeY = ColNames("board").length - 2;
+    if (parseInt(x).toString() == "NaN" || parseFloat(x).toString() != parseInt(x).toString()){
+        errors.push("x musi być typu int");
+    }
+    else{
+        if(x > boardSizeX){
+            errors.push("x musi być w rozmiarze "+data.board.length-1);
+        }
+    }
+    if (parseInt(y).toString() == "NaN" || parseFloat(y).toString() != parseInt(y).toString()){
+        errors.push("y musi być typu int");
+    }
+    if(errors.length <= 0){
+        var colName = "col"+y.toString();    
+        const query = db.prepare(
+            `UPDATE board SET ${colName} = '0' WHERE id = ?`
+        )
+        query.all(x);
+        return null;
+    }
+    else{
+        return errors;
     }
 }
 export function getBoardData(){

@@ -1,6 +1,6 @@
 import express from "express";
 import morgan from "morgan";
-import data, { addBuilding, getBoardData } from "./data.js";
+import data, { addBuilding, getBoardData, removeBuilding } from "./data.js";
 //ponieważ używam 2 (tak naprawde to 3) różnych locahostów musze mieć różne porty
 const port = 2137;
 const app = express();
@@ -15,9 +15,8 @@ app.get("/", (req, res) =>{
         board,
     });
 });
-app.post("/input", (req, res) =>{
-    var errors = [];
-    //data.validateBuilingTypeAndPosition(req.body.x,req.body.y,req.body.buildingType);
+app.post("/add", (req, res) =>{
+    var errors = data.validateBuilingTypeAndPosition(req.body.x,req.body.y,req.body.buildingType);
     if(errors.length == 0){
         addBuilding(req.body.x,req.body.y,req.body.buildingType);    
         res.redirect("/");
@@ -27,6 +26,10 @@ app.post("/input", (req, res) =>{
             errors,
         });
     }
+});
+app.post("/remove", (req, res) =>{
+    removeBuilding(req.body.x,req.body.y);
+    res.redirect("/");
 });
 app.get("/about", (req, res) =>{
     res.render("about",{
