@@ -28,7 +28,7 @@ app.post("/add-building", (req, res) =>{
     }
 });
 app.post("/remove", (req, res) =>{
-    removeBuilding(req.body.x,req.body.y);
+    removeBuilding(req.body.x,req.body.y,req.body.buildingType);
     res.redirect("/");
 });
 app.get("/add-space", (req,res) =>{

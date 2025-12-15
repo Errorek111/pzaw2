@@ -1,5 +1,7 @@
 import { DatabaseSync} from "node:sqlite";
 import { parse } from "path";
+import { isSet } from "util/types";
+import { isStringOneByteRepresentation } from "v8";
 const db_path = "./database.sqlite";
 const db = new  DatabaseSync(db_path);
 db.exec(
@@ -99,7 +101,6 @@ export function validateBuilingTypeAndPosition(x,y,inputString){
             errors.push("y poza rozmiarem planszy");
         }
     }
-    var counter = 0;
     var temp = db_ops.get_buildings.all();
     var buildings = [];
     for(var i=0;i<temp.length;i++){
@@ -129,7 +130,7 @@ export function addBuilding(x,y,inputString){
         addBld.all(building,parseInt(x));
     }
 }
-export function removeBuilding(x,y){
+export function removeBuilding(x,y,inputString){
     var errors = [];
     var boardSizeX = db_ops.get_board.all().length;
     var boardSizeY = ColNames("board").length - 2;
@@ -144,12 +145,29 @@ export function removeBuilding(x,y){
     if (parseInt(y).toString() == "NaN" || parseFloat(y).toString() != parseInt(y).toString()){
         errors.push("y musi być typu int");
     }
+    var colName = "col"+y.toString();
+    var temp = db_ops.get_buildings.all();
+    var buildings = [];
+    for(var i=0;i<temp.length;i++){
+        buildings.push(temp[i]["name"]);
+    }
+    if(parseInt(inputString).toString() == "NaN"){
+        if(!buildings.includes(inputString)){
+            errors.push("budynek nie istneje");
+        }
+    } 
     if(errors.length <= 0){
-        var colName = "col"+y.toString();    
+        var replacer;
+        if(inputString != '0'){
+            replacer = db_ops.get_buidling_sign.all(inputString)[0]["symbol"];
+        }
+        else{
+            replacer = '0';
+        }
         const query = db.prepare(
-            `UPDATE board SET ${colName} = '0' WHERE id = ?`
+            `UPDATE board SET ${colName} = ? WHERE id = ?`
         )
-        query.all(x);
+        query.all(replacer,x);
         return null;
     }
     else{
