@@ -1,6 +1,7 @@
 projekt03:
+  -pobrać biblioteki express i morgan z użyciem komendy npm install
   -stworzyć plik database.sqlite w folderze projekt03/index.js
-  -uruchomić plik projekt03/index.js przy użyciu komendy node podczas pierwszego uruchomienia należy na początku komendy dodać parametr NEW_GAME=1
+  -uruchomić serwer z pliku index.js z użyciem komendy node z folderu projekt03 (z folderu ~ : cd pzaw2/projekt03 -> node index.js) podczas pierwszego uruchomienia należy na początku komendy dodać parametr NEW_GAME=1 (NEW_GAME=1 node index.js)
   -w przeglądarce wejść na localhost:2137/
   -przy użyciu pól tekstowych można:
     -dodać budynki na planszy; puste pola to 0 budynki to litery;
