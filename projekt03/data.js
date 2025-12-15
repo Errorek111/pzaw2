@@ -76,13 +76,6 @@ function ColNames(table){
     }
     return colNames;
 }
-const data = {
-    "buildings": [
-        { name: "House", mapSign :"H" },
-        { name :"Road", mapSign :"R" },
-    ],
-}
-
 export function validateBuilingTypeAndPosition(x,y,inputString){
     if(parseInt(x) == 21 && parseInt(y) == 37){
         console.log("Kremówkowy Budynek")
