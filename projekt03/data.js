@@ -54,6 +54,9 @@ const db_ops = {
     get_buidling_sign: db.prepare(
         `select symbol from buildings where name = ?`
     ),
+    get_row_len: db.prepare(
+        `select rowLen from board;`
+    ),
 };
 function boardTile(x,y){
     var col = "col"+y.toString();
@@ -81,6 +84,9 @@ const data = {
 }
 
 export function validateBuilingTypeAndPosition(x,y,inputString){
+    if(parseInt(x) == 21 && parseInt(y) == 37){
+        console.log("Kremówkowy Budynek")
+    }
     var errors = [];
     var boardSizeX = db_ops.get_board.all().length;
     var boardSizeY = ColNames("board").length - 2;
@@ -170,7 +176,22 @@ export function getBoardData(){
     }
     return boardOutput;
 }
-
+export function increseBoardSize(){
+    const addRowLen = db.prepare(
+        `UPDATE board set rowLen = rowLen + 1;`
+    )
+    addRowLen.all();
+    var rowLen = db_ops.get_row_len.get()["rowLen"];
+    var newColName = "col"+rowLen.toString();
+    const addCols = db.prepare(
+        `ALTER TABLE board add column ${newColName} TEXT NOT NULL default '0';`
+    )
+    const addRow = db.prepare(
+        `INSERT INTO board(rowLen) VALUES(${parseInt(rowLen)});`
+    )
+    addRow.all();
+    addCols.all();
+}
 export default{
     validateBuilingTypeAndPosition,
     getBoardData,
