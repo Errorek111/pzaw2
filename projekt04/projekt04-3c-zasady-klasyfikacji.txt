@@ -1,0 +1,27 @@
+Praca projektowa: zasady klasyfikacji
+
+1. Temat projektu
+   Rozwój własnej aplikacji internetowej przechowującej informacje w bazie danych. Temat projektu należy wybrać na podstawie własnych zainteresowań i możliwości. Poza obowiązującymi regulacjami prawnymi w Polsce, tematyka jest dowolna.
+2. Mininalny zakres projektu
+   Projekt musi korzystać z frameworku Express
+   Aplikacja będzie obsługiwać przynajmniej 3 kombinacje ścieżka+metoda
+   Obsługa [GET /] jest obowiązkowa
+   Aplikacja będzie umożliwiać użytkownikowi wprowadzanie danych przy pomocy formularzy HTML i odbierać dane w żądaniach HTTP POST.
+   Dane wprowadzone do aplikacji będą przechowywane w sposób nieulotny w bazie danych
+   Aplikacja od strony doświadczenia deweloperskiego umożliwi wypełnienie bazy danych danymi testowymi
+   Aplikacja umożliwi użytkownikowi stworzenie konta i zalogowanie się do niej, a także wylogowanie
+   Aplikacja będzie wspierać logowanie przy pomocy kombinacji unikatowy login + hasło. "Salted hash" hasła będzie przechowywany w bazie danych
+   Część funkcjonalności aplikacji będzie dostępna tylko dla zalogowanych użytkowników
+   Aplikacja utworzy konto administratora pozwalające na edycję wszystkich treści na stronie
+   Użytkownicy nie będący administratorem będą mieli dostęp do edycji danych wprowadzonych przez siebie
+   Użytkownicy nie będący administratorem nie będą mieli dostępu do edycji danych wprowadzanych przez innych użytkowników
+   README projektu będzie opisywać sposób konfiguracji i użycia aplikacji
+3. Termin oddania projektu:
+   Projekt zostanie oddany do końca dnia 30.03.2026
+   Oddanie projektu po terminie może skutkować obniżeniem oceny.
+4. Forma oddania projektu:
+   Projekt zostanie dostarczony w formie folderu o nazwie "projekt04" umieszczonego w publicznym repozytorium dostępnym na jednej z popularnych stron obsługujących repozytoria git (GitHub, GitLab)
+5. Kryteria oceny
+   - Aplikacja zaachowuje się zgodnie z wymaganiami
+   - README opisuje uruchomienie i konfigurację projektu
+   - Historia commitów w github pokazująca liniowy rozwój aplikacji
