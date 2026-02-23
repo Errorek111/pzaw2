@@ -1,6 +1,8 @@
 import express from "express";
 import morgan from "morgan";
+import cookieParser from "cookie-parser";
 import data, { addBuilding, getBoardData, increseBoardSize, removeBuilding } from "./data.js";
+import settings from "./settings.js";
 //ponieważ używam 2 (tak naprawde to 3) różnych locahostów musze mieć różne porty
 const port = 2137;
 const app = express();
@@ -8,6 +10,18 @@ app.set("view engine", "ejs");
 app.use(express.static("public"));
 app.use(express.urlencoded());
 app.use(morgan("dev"));
+app.use(cookieParser());
+
+const settingsRouter = express.Router();
+settingsRouter.use("/toggle-theme", settings.themeToggle);
+app.use("/settings", settingsRouter);
+
+function settingsLocals(req, res, next) {
+  res.locals.app = settings.getSettings(req);
+  res.locals.page = req.path;
+  next();
+}
+app.use(settingsLocals);
 
 app.get("/", (req, res) =>{
     const board = getBoardData()
