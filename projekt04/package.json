@@ -11,9 +11,12 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "argo": "^1.0.1",
+    "argon": "^2.0.21",
+    "argon2": "^0.44.0",
     "cookie-parser": "^1.4.7",
     "ejs": "^4.0.1",
-    "express": "^5.1.0",
+    "express": "^5.2.1",
     "morgan": "^1.10.1"
   }
 }
