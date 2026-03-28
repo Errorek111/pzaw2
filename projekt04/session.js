@@ -78,7 +78,12 @@ export function sessionHandler(req, res, next) {
   }
 }
 
+export function deleteSession(){
+
+}
+
 export default {
-  createSession,
-  sessionHandler,
+    createSession,
+    sessionHandler,
+    deleteSession,
 };
