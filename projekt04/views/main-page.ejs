@@ -1,5 +1,7 @@
 <%- include("header.ejs") %><br>
+<% if (saveNameGet(req.cookies.ses_id) != null) { %>
 Name: <%= saveNameGet(req.cookies.ses_id) %>
+<% } %>
 <table>
     <tbody>
       <% board.forEach((row, rowIndex) => { %>

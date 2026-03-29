@@ -237,7 +237,10 @@ export function deleteSave(id){
 }
 export function getSaveName(id){
     let save = db_ops.getSaveGameName.get(parseInt(id));
-    return save.name;
+    if(save != undefined){
+        return save.name;
+    }
+    else{ return null };
 }
 export function getSaves(){
     return db_ops.selectSaves.all();
