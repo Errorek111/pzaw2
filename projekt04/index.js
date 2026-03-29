@@ -3,9 +3,6 @@ import morgan from "morgan";
 import cookieParser from "cookie-parser";
 import data, { addBuilding, getBoardData, increseBoardSize, removeBuilding } from "./data.js";
 import settings from "./settings.js";
-import session, { sessionHandler, createSession }from "./session.js";
-import user, { createUser, getUser, validatePassword } from "./user.js";
-import auth from "./auth.js";
 //ponieważ używam 2 (tak naprawde to 3) różnych locahostów musze mieć różne porty
 const port = 2137;
 const app = express();
@@ -31,14 +28,8 @@ app.get("/", (req, res) =>{
     res.render("main-page",{
         board,
     });
+    console.info(res.locals.user);
 });
-const authRouter = express.Router();
-authRouter.get("/signup", auth.signup_get);
-authRouter.post("/signup", auth.signup_post);
-authRouter.get("/login", auth.login_get);
-authRouter.post("/login", auth.login_post);
-authRouter.get("/logout", auth.logout);
-app.use("/auth", authRouter);
 
 app.post("/add-building", (req, res) =>{
     var errors = data.validateBuilingTypeAndPosition(req.body.x,req.body.y,req.body.buildingType);
