@@ -2,6 +2,7 @@ import { DatabaseSync } from "node:sqlite";
 import { parse } from "path";
 import { isSet } from "util/types";
 import { isStringOneByteRepresentation } from "v8";
+import user, { createUser } from "./user.js";
 const db_path = "./database.sqlite";
 const db = new DatabaseSync(db_path);
 db.exec(
@@ -49,6 +50,15 @@ if (process.env.NEW_GAME) {
     const createBuildingRules = db.prepare(
         `INSERT INTO placement_rules VALUES(null,1,'must_be_next_to',2);`
     )
+    //bezpieczne hasła
+    let users = [['admin','1234567890'],['john','qwerty'],['joe','ytrewq']];
+    for(const newUser of users){
+        await createUser(newUser[0],newUser[1]);
+    }
+    const adminPriveleges = db.prepare(
+        `update users set role = 'admin' where username = 'admin';`
+    )
+    adminPriveleges.run();
     createBuildingRules.all();
 }
 const db_ops = {

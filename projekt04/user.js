@@ -1,6 +1,7 @@
 import { DatabaseSync } from "node:sqlite";
 import argon2 from "argon2";
 import session, { createSession, deleteSession } from "./session.js";
+import { constrainedMemory } from "process";
 const db_path = "./database.sqlite";
 const db = new DatabaseSync(db_path);
 
