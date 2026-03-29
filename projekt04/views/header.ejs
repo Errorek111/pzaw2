@@ -19,4 +19,6 @@
             Ciemny | <strong>Jasny</strong>
             <% } %>
         </a>
-        <% if(res.locals.user != null){res.locals.user} %>
+        <% if (req.cookies.ses_id != null) { %>
+            <a href="/user-panel">HELLO <%= getUserBySession(req.cookies.ses_id) %> </a>
+        <% } %> 

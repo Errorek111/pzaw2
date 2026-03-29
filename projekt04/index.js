@@ -3,8 +3,8 @@ import morgan from "morgan";
 import cookieParser from "cookie-parser";
 import data, { addBuilding, getBoardData, increseBoardSize, removeBuilding } from "./data.js";
 import settings from "./settings.js";
-import user, { createUser, loginUser, logOut } from "./user.js";
-import session, { createSession, deleteSession } from "./session.js";
+import user, { createUser, loginUser, logOut, sessionUserById, verifyLogin, verifySignup } from "./user.js";
+import session, { createSession, deleteSession, getSessionUser } from "./session.js";
 //ponieważ używam 2 (tak naprawde to 3) różnych locahostów musze mieć różne porty
 const port = 2137;
 const app = express();
@@ -25,40 +25,81 @@ function settingsLocals(req, res, next) {
 }
 app.use(settingsLocals);
 
+function getUserBySession(id){
+    return sessionUserById(getSessionUser(id));
+}
 app.get("/", (req, res) =>{
-    const board = getBoardData()
-    res.render("main-page",{
-        board,
-        res,
-    });
+    if(req.cookies.ses_id != null){
+        const board = getBoardData()
+        res.render("main-page",{
+            getUserBySession,
+            board,
+            req,
+        });
+    }
+    else{
+        res.redirect("/login");
+    }
 });
 app.get("/login", (req,res)=>{
+    let errors = [];
     res.render("login",{
-        res,
+        getUserBySession,
+        req,
+        errors,
     });
 })
 app.post("/login", async (req,res)=>{
-    let user = await loginUser(req.body.username,req.body.password,res,req);
-    if(!user){
-        return res.status(401).send("Invalid login");
+    let errors = await verifyLogin(req.body.username,req.body.password,res,req);
+    if(errors.length < 1){
+        let user = await loginUser(req.body.username,req.body.password,res,req);
+        console.log(user);
+        createSession(user,res);
+        res.redirect("/");
     }
     else{
-        createSession(user,res);
+        res.render("login", {
+            getUserBySession,
+            req,
+            errors,
+        });
     }
-    res.redirect("/login");
 })
 app.get("/signup", (req,res)=>{
+    let errors = [];
     res.render("signup",{
-        res,
+        getUserBySession,
+        req,
+        errors,
     });
 })
 app.post("/signup", (req,res)=>{
-    createUser(req.body.username,req.body.password);
-    res.redirect("/signup");
+    let errors = verifySignup(req.body.username,req.body.password,req.body.passwordRepeat,req,res) ;
+    if(errors.length <1){
+        createUser(req.body.username,req.body.password);
+        res.redirect("/");
+    }
+    else{
+        res.render("signup",{
+            getUserBySession,
+            req,
+            errors,
+        });
+    }
 });
 app.get("/logout", (req,res)=>{
-    logOut(req,res);
-    res.redirect("/login");
+    if(req.cookies.ses_id != null){
+        logOut(req,res);
+        res.redirect("/login");
+    }
+});
+app.get("/user-panel", (req,res)=>{
+    if(req.cookies.ses_id != null){
+        res.render("userPanel",{
+            getUserBySession,
+            req,
+        });
+    }
 });
 app.post("/add-building", (req, res) =>{
     var errors = data.validateBuilingTypeAndPosition(req.body.x,req.body.y,req.body.buildingType);
@@ -82,7 +123,8 @@ app.get("/add-space", (req,res) =>{
 });
 app.get("/about", (req, res) =>{
     res.render("about",{
-        res,
+        getUserBySession,
+        req,
     });
 });
 app.get("/redirect", (req, res) =>{

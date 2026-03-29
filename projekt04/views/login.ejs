@@ -1,2 +1,7 @@
 <%- include("header.ejs") %>
 <%- include("loginForm.ejs") %>
+
+<%if (errors.length >= 1){ errors.forEach(message => { %>
+    <p><%= message %></p>
+<% })} %>
+

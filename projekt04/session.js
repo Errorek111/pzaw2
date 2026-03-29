@@ -32,10 +32,11 @@ export async function createSession(user, res) {
     let createdAt = Date.now();
     let session = db_ops.create_session.get(sessionId, user, createdAt);
     res.cookie(SESSION_COOKIE, session.id.toString(), {
-        maxAge: 1000*60*10,
+        maxAge: ONE_WEEK,
         httpOnly: true,
         secure: true,
     });
+    console.log("session_created");
     return session;
 }
 export function deleteSession(id,res){
@@ -46,8 +47,13 @@ export function deleteSession(id,res){
         secure: true,
     });
 }
+export function getSessionUser(id){
+    let user = db_ops.get_session.get(id);
+    return user.user_id;
+}
 
 export default{
     createSession,
     deleteSession,
+    getSessionUser,
 }

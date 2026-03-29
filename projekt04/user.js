@@ -1,20 +1,20 @@
-import { DatabaseSync} from "node:sqlite";
+import { DatabaseSync } from "node:sqlite";
 import argon2 from "argon2";
 import session, { createSession, deleteSession } from "./session.js";
 const db_path = "./database.sqlite";
-const db = new  DatabaseSync(db_path);
+const db = new DatabaseSync(db_path);
 
 
 const PEPPER = process.env.PEPPER;
 if (PEPPER == null) {
-  console.error(
-    `PEPPER environment variable missing.
+    console.error(
+        `PEPPER environment variable missing.
      Please create an env file or provide SECRET via environment variables.`,
-  );
-  process.exit(1);
+    );
+    process.exit(1);
 }
 const HASH_PARAMS = {
-  secret: Buffer.from(PEPPER, "hex"),
+    secret: Buffer.from(PEPPER, "hex"),
 };
 
 db.exec(
@@ -38,27 +38,101 @@ const db_ops = {
     addUser: db.prepare(
         "insert into users (username,passhash,createdAt) values (?,?,?);"
     ),
+    getAllUsernames: db.prepare(
+        "select username from users;"
+    ),
 }
-
-export async function loginUser(username,password,res,req){
-    let user = db_ops.getUserByName.get(username);
-    if(user != null){
-        let userLoginData = db_ops.getUserLoginData.get(user.id);
-        if(await argon2.verify(userLoginData.passhash,password, HASH_PARAMS)){
-            return user.id;
+export async function verifyLogin(username, password, res, req) {
+    let errors = [];
+    if (username != "") {
+        let users = db_ops.getAllUsernames.all();
+        let usernames = [];
+        users.forEach(element => {
+            usernames.push(element['username']);
+        });
+        if (!usernames.includes(username)) {
+            errors.push("No user whith this username");
+        }
+        else {
+            if (password != "") {
+                let user = db_ops.getUserByName.get(username);
+                if (user != null) {
+                    let userLoginData = db_ops.getUserLoginData.get(user.id);
+                    if (await argon2.verify(userLoginData.passhash, password, HASH_PARAMS)) {
+                        return errors;
+                    }
+                    else {
+                        errors.push("Incorrect password or username");
+                    }
+                }
+                else {
+                    errors.push("Incorrect password or username");
+                }
+            }
+            else {
+                errors.push("Password is required");
+            }
         }
     }
+    else {
+        errors.push("Username is required");
+    }
+    return errors;
 }
-export async function createUser(username,password){
+export async function verifySignup(username, password, passwordRepeat, res, req) {
+    let errors = [];
+    if (username != "") {
+        let users = db_ops.getAllUsernames.all();
+        let usernames = [];
+        users.forEach(element => {
+            usernames.push(element['username']);
+        });
+        if (usernames.includes(username)) {
+            errors.push("Username is taken");
+        }
+        else {
+            if (password != "") {
+                if (passwordRepeat != "") {
+                    if (password == passwordRepeat) {
+                        return errors;
+                    }
+                    else {
+                        errors.push("Passwords don't match");
+                    }
+                }
+                else {
+                    errors.push("Password must be repeated");
+                }
+            }
+            else {
+                errors.push("Password is required");
+            }
+        }
+    }
+    else {
+        errors.push("Username is required");
+    }
+    return errors;
+}
+export async function loginUser(username, password) {
+    let user = db_ops.getUserByName.get(username);
+    return user.id;
+}
+export async function createUser(username, password) {
     let createdAt = Date.now();
     let passhash = await argon2.hash(password, HASH_PARAMS);
-    db_ops.addUser.run(username,passhash,createdAt);
+    db_ops.addUser.run(username, passhash, createdAt);
 }
-export function logOut(req,res){
-    deleteSession(req.cookies.ses_id,res);
+export function sessionUserById(id){
+    let user = db_ops.getUser.get(id);
+    return user.username;
+}
+export function logOut(req, res) {
+    deleteSession(req.cookies.ses_id, res);
 }
 
-export default{
+export default {
     loginUser,
     createUser,
+    sessionUserById,
 }
