@@ -253,7 +253,12 @@ export function getSaveName(id){
     else{ return null };
 }
 export function getSaves(){
-    return db_ops.selectSaves.all();
+    let saves = [];
+    let dbsaves = db_ops.selectSaves.all();
+    for(var i=0;i<dbsaves.length;i++){
+        saves.push([dbsaves.id,dbsaves.user_id,dbsaves.name]);
+    }
+    return saves;
 }
 export default {
     validateBuilingTypeAndPosition,
