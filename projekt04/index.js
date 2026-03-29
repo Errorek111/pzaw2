@@ -3,13 +3,15 @@ import morgan from "morgan";
 import cookieParser from "cookie-parser";
 import data, { addBuilding, getBoardData, increseBoardSize, removeBuilding } from "./data.js";
 import settings from "./settings.js";
+import user, { createUser, loginUser, logOut } from "./user.js";
+import session, { createSession, deleteSession } from "./session.js";
 //ponieważ używam 2 (tak naprawde to 3) różnych locahostów musze mieć różne porty
 const port = 2137;
 const app = express();
 app.set("view engine", "ejs");
 app.use(express.static("public"));
-app.use(express.urlencoded());
 app.use(morgan("dev"));
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 const settingsRouter = express.Router();
@@ -27,10 +29,37 @@ app.get("/", (req, res) =>{
     const board = getBoardData()
     res.render("main-page",{
         board,
+        res,
     });
-    console.info(res.locals.user);
 });
-
+app.get("/login", (req,res)=>{
+    res.render("login",{
+        res,
+    });
+})
+app.post("/login", async (req,res)=>{
+    let user = await loginUser(req.body.username,req.body.password,res,req);
+    if(!user){
+        return res.status(401).send("Invalid login");
+    }
+    else{
+        createSession(user,res);
+    }
+    res.redirect("/login");
+})
+app.get("/signup", (req,res)=>{
+    res.render("signup",{
+        res,
+    });
+})
+app.post("/signup", (req,res)=>{
+    createUser(req.body.username,req.body.password);
+    res.redirect("/signup");
+});
+app.get("/logout", (req,res)=>{
+    logOut(req,res);
+    res.redirect("/login");
+});
 app.post("/add-building", (req, res) =>{
     var errors = data.validateBuilingTypeAndPosition(req.body.x,req.body.y,req.body.buildingType);
     if(errors.length == 0){
@@ -53,7 +82,7 @@ app.get("/add-space", (req,res) =>{
 });
 app.get("/about", (req, res) =>{
     res.render("about",{
-
+        res,
     });
 });
 app.get("/redirect", (req, res) =>{
