@@ -1,0 +1,17 @@
+<%- include("header.ejs") %>
+
+<% if (saves?.length) { %>
+  <% saves.forEach(save => { %>
+    <form method="POST" action="/delete-save">
+      <input type="hidden" name="id" value="<%= save.id %>">
+      
+      <span>
+        <strong>save name: <%= save.name %></strong> (username: <%= sessionUserById(save.user_id) %>)
+      </span>
+      
+      <button type="submit">Select</button>
+    </form>
+  <% }) %>
+<% } else { %>
+  <p>No saves found</p>
+<% } %>

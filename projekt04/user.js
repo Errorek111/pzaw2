@@ -22,7 +22,8 @@ db.exec(
         id INTEGER primary key autoincrement,
         username text unique,
         passhash text,
-        createdAt integer
+        createdAt integer,
+        role text default "user"
     );`
 );
 const db_ops = {
@@ -40,6 +41,9 @@ const db_ops = {
     ),
     getAllUsernames: db.prepare(
         "select username from users;"
+    ),
+    getUserPrivelege: db.prepare(
+        "select role from users where id = ?;"
     ),
 }
 export async function verifyLogin(username, password, res, req) {
@@ -79,7 +83,7 @@ export async function verifyLogin(username, password, res, req) {
     }
     return errors;
 }
-export async function verifySignup(username, password, passwordRepeat, res, req) {
+export function verifySignup(username, password, passwordRepeat, res, req) {
     let errors = [];
     if (username != "") {
         let users = db_ops.getAllUsernames.all();
@@ -123,16 +127,21 @@ export async function createUser(username, password) {
     let passhash = await argon2.hash(password, HASH_PARAMS);
     db_ops.addUser.run(username, passhash, createdAt);
 }
-export function sessionUserById(id){
+export function sessionUserById(id) {
     let user = db_ops.getUser.get(id);
     return user.username;
 }
 export function logOut(req, res) {
     deleteSession(req.cookies.ses_id, res);
 }
+export function getRole(id){
+    let role = db_ops.getUserPrivelege.get(id);
+    return role.role;
+}
 
 export default {
     loginUser,
     createUser,
     sessionUserById,
+    getRole,
 }

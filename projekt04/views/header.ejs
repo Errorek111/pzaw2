@@ -18,7 +18,7 @@
             <% } else { %>
             Ciemny | <strong>Jasny</strong>
             <% } %>
-        </a>
+        </a><br>
         <% if (req.cookies.ses_id != null) { %>
             <a href="/user-panel">HELLO <%= getUserBySession(req.cookies.ses_id) %> </a>
         <% } %> 

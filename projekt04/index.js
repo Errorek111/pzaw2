@@ -1,9 +1,9 @@
 import express from "express";
 import morgan from "morgan";
 import cookieParser from "cookie-parser";
-import data, { addBuilding, getBoardData, increseBoardSize, removeBuilding } from "./data.js";
+import data, { addBuilding, deleteSave, getBoardData, getSaveName, getSaves, increseBoardSize, removeBuilding, setSaveName } from "./data.js";
 import settings from "./settings.js";
-import user, { createUser, loginUser, logOut, sessionUserById, verifyLogin, verifySignup } from "./user.js";
+import user, { createUser, getRole, loginUser, logOut, sessionUserById, verifyLogin, verifySignup } from "./user.js";
 import session, { createSession, deleteSession, getSessionUser } from "./session.js";
 //ponieważ używam 2 (tak naprawde to 3) różnych locahostów musze mieć różne porty
 const port = 2137;
@@ -28,10 +28,18 @@ app.use(settingsLocals);
 function getUserBySession(id){
     return sessionUserById(getSessionUser(id));
 }
+function getUserRole(id){
+    return getRole(getSessionUser(id));
+}
+function saveNameGet(id){
+    console.log(getSaveName(getSessionUser(id)));
+    return getSaveName(getSessionUser(id));
+}
 app.get("/", (req, res) =>{
     if(req.cookies.ses_id != null){
         const board = getBoardData()
         res.render("main-page",{
+            saveNameGet,
             getUserBySession,
             board,
             req,
@@ -73,11 +81,11 @@ app.get("/signup", (req,res)=>{
         errors,
     });
 })
-app.post("/signup", (req,res)=>{
+app.post("/signup", async (req,res)=>{
     let errors = verifySignup(req.body.username,req.body.password,req.body.passwordRepeat,req,res) ;
-    if(errors.length <1){
-        createUser(req.body.username,req.body.password);
-        res.redirect("/");
+    if(errors.length < 1){
+        await createUser(req.body.username,req.body.password);
+        res.redirect("/login");
     }
     else{
         res.render("signup",{
@@ -96,6 +104,7 @@ app.get("/logout", (req,res)=>{
 app.get("/user-panel", (req,res)=>{
     if(req.cookies.ses_id != null){
         res.render("userPanel",{
+            getUserRole,
             getUserBySession,
             req,
         });
@@ -121,11 +130,28 @@ app.get("/add-space", (req,res) =>{
     increseBoardSize();
     res.redirect("/");
 });
+app.post("/save_name", (req,res) =>{
+    setSaveName(req.body.save_name,getSessionUser(req.cookies.ses_id));
+    res.redirect("/");
+});
 app.get("/about", (req, res) =>{
     res.render("about",{
         getUserBySession,
         req,
     });
+});
+app.get("/user-manager", (req,res)=>{
+    let saves = getSaves();
+    res.render("admin_panel",{
+        saves,
+        sessionUserById,
+        getUserBySession,
+        req,
+    });
+});
+app.post("/delete-save", (req,res)=>{
+    deleteSave(req.body.id);
+    res.redirect("/user-manager");
 });
 app.get("/redirect", (req, res) =>{
     res.redirect("/");
