@@ -1,4 +1,4 @@
-projekt03:
+projekt04:
     -pobrać biblioteki ejs, express, morgan, cookie-parser i argon2 z użyciem komendy npm install
     -stworzyć plik database.sqlite w folderze projekt03/index.js
     -w konsoli użyć komendy npm run generate_env
