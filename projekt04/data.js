@@ -255,9 +255,9 @@ export function getSaveName(id){
 export function getSaves(){
     let saves = [];
     let dbsaves = db_ops.selectSaves.all();
-    for(var i=0;i<dbsaves.length;i++){
-        saves.push([dbsaves.id,dbsaves.user_id,dbsaves.name]);
-    }
+    dbsaves.forEach(save =>{
+        saves.push([save.id,save.user_id,save.name]);
+    });
     return saves;
 }
 export default {
