@@ -1,15 +1,24 @@
 projekt03:
     -pobrać biblioteki ejs, express, morgan, cookie-parser i argon2 z użyciem komendy npm install
     -stworzyć plik database.sqlite w folderze projekt03/index.js
+    -w konsoli użyć komendy npm run generate_env
     -uruchomić serwer z folderu pzaw2/projekt04 przy użyciu komendy npm run dev podczas pierwszego uruchomienia należy na początku komendy dodać parametr NEW_GAME=1 (NEW_GAME=1 npm run dev); generuje on podstawowe dane do gry i 3 przykładowe konta użytkowników w tym 1 administratora
     -w przeglądarce wejść na localhost:2137/ ; przed logowaniem serwer przekieruje do ścieżki /login
     -należy się zalogować; można zrobić nowe konto i potem się na nie zalogować
     -po zalogowaniu strona prziekieruje na stronę główną gdzie:
+        -górny link ( Ciemmy|Jasny ) po kliknięciu zmiena motyw (aktualnie jest to background z białego na szary)
+        -link HELLO (nazwa użytkownika) po kliknięciu prowadzi do panelu użytkownika gdzie:
+            -można wrócić na stronę główną (Main page)
+            -wylogować się
+            -jeżeli użytkownik jest administatorem (dane startowe tworzą użytkownika admin) widać link do panelu zarządania użytkownikami (aktualnie tylko ich zapisanymi grami, które narazie to są same nazwy) gdzie:
+                -jeżeli nie ma żadnych zapisów serwer wypisze wiadomośc że w bazie nie ma zapisów; jak są to zostanie wyświetlony nazwa i użytkownik każdego i obok każdego przycisk który usuwa dany wpis przy wciśnięciu
+        -jeżeli użytkownik ma zapis gry to wyświetli się jego nazwa (z powodu aktualnych limitacji kodu każy użytkownik może mieć tylko 1 zapis i (jak wspomniałem wcześniej) przechowywana jest tylko nazwa; plansza do gry jest wspólna, będzie to zmienione w kolejnej wersji)
         -przy użyciu pól tekstowych można:
             -dodać budynki na planszy; puste pola to 0 budynki to litery;
-            -usunąć lub zastąpić budynek na polu; rzeby zastąpić budynek trzeba wpisać nazwę budynku który chemy na polu postawić żeby usunąc należy wpisać 0
+            -usunąć lub zastąpić budynek na polu; rzeby zastąpić budynek trzeba wpisać nazwę budynku który chcemy na polu postawić żeby usunąc należy wpisać 0
         -przycisk z tekstem submit w sekcji dodaj przestrzeń dodaje 1 rząd i 1 kolumnę do planszy (zmienia rozmiar np. 4x4 na 5x5)
         -przy  wpisywaniu pola na planszy X to rząd a Y to miejsce od lewej w rzędzie, obie liczby są indexowane od 1 (pierwszy rząd pierwsze miejsce od lewej to (1,1))
+        -w polu tekstowym pod tekstem Nazwa save'a można dodać nazwę zapisu dla zalogowanego użytkownika
         -Nazwy budynków to nazwa po angielsku rozpoczęta wielką literą np. House, aktualnie są 2: House i Road 
         -każdy budynek ma przypisaną dużą literkę (aktualnie jest to pierwsza literka słowa) która pokaże się w odpowiednim miejscu na plaszy o ile dane były podane
         -w przypadku podania niepoprawnych danych serwer wypisze błąd i poprosi o ponowne wpisanie danych
