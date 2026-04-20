@@ -1,0 +1,8 @@
+<%- include("header.ejs") %>
+<a href="/signup">Don't have an account? Sign up in here</a>
+<%- include("loginForm.ejs") %>
+
+<%if (errors.length >= 1){ errors.forEach(message => { %>
+    <p><%= message %></p>
+<% })} %>
+

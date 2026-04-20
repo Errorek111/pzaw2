@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html data-theme="<%- app.theme %>" lang="pl">
+    <head>
+        <meta charset="UTF-8">
+        <style>
+            *{
+                background-color: #ffffff;    
+            }
+            *[data-theme='dark']{
+                background-color: #dedede;
+            }
+        </style>
+    </head>
+    <body>
+        <a href="/settings/toggle-theme?next=<%- encodeURIComponent(page) %>">
+            <% if (app.theme === "dark") { %>
+            <strong>Ciemny</strong> | Jasny
+            <% } else { %>
+            Ciemny | <strong>Jasny</strong>
+            <% } %>
+        </a><br>
+        <% if (req.cookies.ses_id != null) { %>
+            <a href="/user-panel">HELLO <%= getUserBySession(req.cookies.ses_id) %> </a>
+        <% } %> 

@@ -1,0 +1,24 @@
+{
+  "name": "projekt02",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "node --watch --env-file .env index.js",
+    "generate_env": "./generate_env.sh > .env"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "argo": "^1.0.1",
+    "argon": "^2.0.21",
+    "argon2": "^0.44.0",
+    "cookie-parser": "^1.4.7",
+    "ejs": "^4.0.1",
+    "express": "^5.2.1",
+    "morgan": "^1.10.1"
+  }
+}

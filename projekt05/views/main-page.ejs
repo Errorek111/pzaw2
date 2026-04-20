@@ -1,0 +1,21 @@
+<%- include("header.ejs") %><br>
+<% if (saveNameGet(req.cookies.ses_id) != null) { %>
+Name: <%= saveNameGet(req.cookies.ses_id) %>
+<% } %>
+<table>
+    <tbody>
+      <% board.forEach((row, rowIndex) => { %>
+        <tr>
+          <% row.forEach((cell, colIndex) => { %>
+              <td>[<%= cell %>]</td>
+          <% }) %>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+<%- include("addBuilding.ejs") %>
+<%- include("removeBuilding.ejs") %>
+<%- include("increseBoardSize.ejs") %>
+<%- include("name_save.ejs") %>
+</body>
+</html>
