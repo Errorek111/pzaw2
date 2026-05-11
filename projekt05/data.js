@@ -2,7 +2,7 @@ import { DatabaseSync } from "node:sqlite";
 import { parse } from "path";
 import { isSet } from "util/types";
 import { isStringOneByteRepresentation } from "v8";
-import user, { createUser } from "./user.js";
+import user, { createUser, GetAciveSave, SetAciveSave } from "./user.js";
 const db_path = "./database.sqlite";
 const db = new DatabaseSync(db_path);
 db.exec(
@@ -28,8 +28,9 @@ rule_building_id integer
 );
 create table if not exists save_games (
     id integer primary key autoincrement,
-    user_id integer unique,
-    name text
+    user_id integer,
+    name text unique,
+    save_data text not null
 );`
     //rule_building_id może nie mieć sensu w nazwie ale służy do rozpoznania budynku z którym zasada jest związana np większośc budynków musi być obok ulicy
 );
@@ -89,6 +90,12 @@ const db_ops = {
     deleteSave: db.prepare(
         "delete from save_games where id = ?;"
     ),
+    newSave: db.prepare(
+        "insert into save_games (name,user_id,save_data) values (?,?,?);"       
+    ),
+    overwriteSave: db.prepare(
+        "update save_games set save_data = '?' where name=? and id = ?;"
+    ),
 };
 function boardTile(x, y) {
     var col = "col" + y.toString();
@@ -102,11 +109,33 @@ function ColNames(table) {
         `PRAGMA table_info(${table});`
     );
     var colData = stmt.all();
-    var colNames = []
+    var colNames = [];
     for (var i = 0; i < colData.length; i++) {
         colNames.push(colData[i].name);
     }
     return colNames;
+}
+export function ConvertBoardToSave(){
+    var boardSizeX = db_ops.get_board.all().length;
+    var boardSizeY = ColNames("board").length - 2;
+    let save = "";
+    for(var i=1;i<=boardSizeX;i++){
+        for(var j=1;j<=boardSizeY;j++){
+            var col = "col"+j.toString();
+            const query = db.prepare(
+                `SELECT ${col} from board where id = ?`
+            );
+            var cell = query.all(i); 
+            save += cell[0][col];;
+        }
+        if(i != boardSizeX){
+            save += ",";
+        }
+    }
+    return save;
+}
+export function ConvertSaveToBoard(){
+    //
 }
 export function validateBuilingTypeAndPosition(x, y, inputString) {
     if (parseInt(x) == 21 && parseInt(y) == 37) {
@@ -234,12 +263,14 @@ export function increseBoardSize() {
     addCols.all();
 }
 export function setSaveName(save_name, id){
-    let userSave = db_ops.getSaveGameName.get(id);
-    if(userSave != null){
-        db_ops.setSaveName.get(save_name,id);
+    if(save_name == "" && GetAciveSave(id) != null){
+        let activeSave = GetAciveSave(id);
+        console.log(activeSave);
+        db_ops.overwriteSave.get(ConvertBoardToSave(),activeSave,id)
     }
-    else{
-        db_ops.addSaveName.get(save_name,id);
+    else if(save_name != ""){
+        db_ops.newSave.get(save_name,id,ConvertBoardToSave());
+        SetAciveSave(save_name,id);
     }
 }
 export function deleteSave(id){

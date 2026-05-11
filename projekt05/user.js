@@ -24,7 +24,8 @@ db.exec(
         username text unique,
         passhash text,
         createdAt integer,
-        role text default "user"
+        role text default "user",
+        active_save text default null
     );`
 );
 const db_ops = {
@@ -46,6 +47,19 @@ const db_ops = {
     getUserPrivelege: db.prepare(
         "select role from users where id = ?;"
     ),
+    getActiveSave: db.prepare(
+        "select active_save from users where id = ?;"
+    ),
+    setActiveSave: db.prepare(
+        "update users set active_save = ? where id =?;"
+    ),
+}
+export function GetAciveSave(id){
+    let save = db_ops.getActiveSave.all(id);
+    return save[0]["active_save"];
+}
+export function SetAciveSave(save,id){
+    return db_ops.setActiveSave.get(save,id);
 }
 export async function verifyLogin(username, password, res, req) {
     let errors = [];

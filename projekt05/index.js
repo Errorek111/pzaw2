@@ -1,7 +1,7 @@
 import express from "express";
 import morgan from "morgan";
 import cookieParser from "cookie-parser";
-import data, { addBuilding, deleteSave, getBoardData, getSaveName, getSaves, increseBoardSize, removeBuilding, setSaveName } from "./data.js";
+import data, { addBuilding, ConvertBoardToSave, deleteSave, getBoardData, getSaveName, getSaves, increseBoardSize, removeBuilding, setSaveName } from "./data.js";
 import settings from "./settings.js";
 import user, { createUser, getRole, loginUser, logOut, sessionUserById, verifyLogin, verifySignup } from "./user.js";
 import session, { createSession, deleteSession, getSessionUser } from "./session.js";
@@ -37,7 +37,7 @@ function saveNameGet(id){
 }
 app.get("/", (req, res) =>{
     if(req.cookies.ses_id != null){
-        const board = getBoardData()
+        const board = getBoardData();
         res.render("main-page",{
             saveNameGet,
             getUserBySession,
@@ -61,7 +61,6 @@ app.post("/login", async (req,res)=>{
     let errors = await verifyLogin(req.body.username,req.body.password,res,req);
     if(errors.length < 1){
         let user = await loginUser(req.body.username,req.body.password,res,req);
-        console.log(user);
         createSession(user,res);
         res.redirect("/");
     }
