@@ -94,7 +94,7 @@ const db_ops = {
         "insert into save_games (name,user_id,save_data) values (?,?,?);"       
     ),
     overwriteSave: db.prepare(
-        "update save_games set save_data = '?' where name=? and id = ?;"
+        "update save_games set save_data = ? where name=? and user_id = ?;"
     ),
 };
 function boardTile(x, y) {
