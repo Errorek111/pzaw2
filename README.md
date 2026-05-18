@@ -1,8 +1,8 @@
-projekt04:
+projekt05:
     -pobrać biblioteki ejs, express, morgan, cookie-parser i argon2 z użyciem komendy npm install
     -stworzyć plik database.sqlite w folderze projekt03/index.js
     -w konsoli użyć komendy npm run generate_env
-    -uruchomić serwer z folderu pzaw2/projekt04 przy użyciu komendy npm run dev podczas pierwszego uruchomienia należy na początku komendy dodać parametr NEW_GAME=1 (NEW_GAME=1 npm run dev); generuje on podstawowe dane do gry i 3 przykładowe konta użytkowników w tym 1 administratora
+    -uruchomić serwer z folderu pzaw2/projekt04 przy użyciu komendy npm run dev podczas pierwszego uruchomienia należy na początku komendy dodać parametr CREATE_STARTING_DATA=1 (CREATE_STARTING_DATA=1 npm run dev); generuje on podstawowe dane do gry i 3 przykładowe konta użytkowników w tym 1 administratora
     -w przeglądarce wejść na localhost:2137/ ; przed logowaniem serwer przekieruje do ścieżki /login
     -należy się zalogować; można zrobić nowe konto i potem się na nie zalogować
     -po zalogowaniu strona prziekieruje na stronę główną gdzie:
