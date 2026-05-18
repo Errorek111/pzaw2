@@ -10,9 +10,9 @@ projekt05:
         -link HELLO (nazwa użytkownika) po kliknięciu prowadzi do panelu użytkownika gdzie:
             -można wrócić na stronę główną (Main page)
             -wylogować się
-            -jeżeli użytkownik jest administatorem (dane startowe tworzą użytkownika admin) widać link do panelu zarządania użytkownikami (aktualnie tylko ich zapisanymi grami, które narazie to są same nazwy) gdzie:
+            -jeżeli użytkownik jest administatorem (dane startowe tworzą użytkownika admin) widać link do panelu zarządania użytkownikami (aktualnie tylko ich zapisanymi grami) gdzie:
                 -jeżeli nie ma żadnych zapisów serwer wypisze wiadomośc że w bazie nie ma zapisów; jak są to zostanie wyświetlony nazwa i użytkownik każdego i obok każdego przycisk który usuwa dany wpis przy wciśnięciu
-        -jeżeli użytkownik ma zapis gry to wyświetli się jego nazwa (z powodu aktualnych limitacji kodu każy użytkownik może mieć tylko 1 zapis i (jak wspomniałem wcześniej) przechowywana jest tylko nazwa; plansza do gry jest wspólna, będzie to zmienione w kolejnej wersji)
+        -jeżeli użytkownik ma zapis gry to wyświetli się jego nazwa 
         -przy użyciu pól tekstowych można:
             -dodać budynki na planszy; puste pola to 0 budynki to litery;
             -usunąć lub zastąpić budynek na polu; rzeby zastąpić budynek trzeba wpisać nazwę budynku który chcemy na polu postawić żeby usunąc należy wpisać 0
