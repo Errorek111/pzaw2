@@ -29,7 +29,7 @@ create table if not exists save_games (
 );`
     //rule_building_id może nie mieć sensu w nazwie ale służy do rozpoznania budynku z którym zasada jest związana np większośc budynków musi być obok ulicy
 );
-if (process.env.NEW_GAME) {
+if (process.env.CREATE_STARTING_DATA) {
     console.log("tworzenie startowych danych");
     const addBuildings = db.prepare(
         `INSERT INTO buildings VALUES (null,'House','H',4.5,2.5),
@@ -201,18 +201,22 @@ export function validateBuilingTypeAndPosition(x, y, inputString) {
     var boardSizeY = ColNames("board").length - 2;
     if (parseInt(x).toString() == "NaN" || parseFloat(x).toString() != parseInt(x).toString()) {
         errors.push("x musi być typu int");
+        return errors;
     }
     else {
-        if (x > boardSizeX) {
-            errors.push("x musi być w rozmiarze " + data.board.length - 1);
+        if (x > boardSizeX || x <= 0) {
+            errors.push("x poza rozmiarem planszy");
+            return errors;
         }
     }
     if (parseInt(y).toString() == "NaN" || parseFloat(y).toString() != parseInt(y).toString()) {
         errors.push("y musi być typu int");
+        return errors;
     }
     else {
-        if (y > boardSizeY) {
+        if (y > boardSizeY || y <= 0) {
             errors.push("y poza rozmiarem planszy");
+            return errors;
         }
     }
     var temp = db_ops.get_buildings.all();
