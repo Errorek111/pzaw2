@@ -167,7 +167,22 @@ export function ConvertSaveToBoard(req){
         return getBoardData();
     }
     else{
-        //
+        db_ops.deleteBoard.get();
+        db_ops.createBoard.get();
+        for(let i=0;i<4;i++){
+            db_ops.insertRow.get(4);
+            if(i==0){
+                for(let j=1;j<=4;j++){
+                    let colName = "col"+j.toString();
+                    console.log(colName);
+                    const addCols = db.prepare(
+                        `ALTER TABLE board add column ${colName} TEXT NOT NULL default '0';`
+                    )
+                    addCols.get();
+                }
+            }
+        }
+        return getBoardData();
     }
 }
 export function selectSave(saveName,res){
@@ -302,7 +317,7 @@ export function increseBoardSize() {
     addRow.all();
     addCols.all();
 }
-export function setSaveName(save_name, id){
+export function setSaveName(save_name, id,res){
     if(save_name == "" && GetAciveSave(id) != null){
         let activeSave = GetAciveSave(id);
         console.log(activeSave);
@@ -310,7 +325,7 @@ export function setSaveName(save_name, id){
     }
     else if(save_name != ""){
         db_ops.newSave.get(save_name,id,ConvertBoardToSave());
-        SetAciveSave(save_name,id);
+        DeleteActiveSave(res);
     }
 }
 export function deleteSave(id){

@@ -139,7 +139,7 @@ app.get("/add-space", (req,res) =>{
     res.redirect("/");
 });
 app.post("/save_name", (req,res) =>{
-    setSaveName(req.body.save_name,getSessionUser(req.cookies.ses_id));
+    setSaveName(req.body.save_name,getSessionUser(req.cookies.ses_id),res);
     res.redirect("/");
 });
 app.get("/about", (req, res) =>{
