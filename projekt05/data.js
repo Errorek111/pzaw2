@@ -1,18 +1,13 @@
 import { DatabaseSync } from "node:sqlite";
-import { parse } from "path";
-import { isSet } from "util/types";
-import { isStringOneByteRepresentation } from "v8";
 import user, { createUser, GetAciveSave, SetAciveSave } from "./user.js";
+import { getSessionUser } from "./session.js";
 const db_path = "./database.sqlite";
 const db = new DatabaseSync(db_path);
+const ACTIVE_SAVE = "active_save";
 db.exec(
     `CREATE TABLE if not exists board (
 id integer primary key autoincrement,
-rowLen integer not null default 4,
-col1 text not null default [0],
-col2 text not null default [0],
-col3 text not null default [0],
-col4 text not null default [0]);
+rowLen integer not null default 4);
 CREATE TABLE IF NOT EXISTS buildings (
 id integer primary key autoincrement,
 name text not null,
@@ -36,12 +31,6 @@ create table if not exists save_games (
 );
 if (process.env.NEW_GAME) {
     console.log("tworzenie startowych danych");
-    const createRow = db.prepare(
-        `INSERT INTO board default VALUES;`
-    )
-    for (var i = 0; i < 4; i++) {
-        createRow.all();
-    }
     const addBuildings = db.prepare(
         `INSERT INTO buildings VALUES (null,'House','H',4.5,2.5),
     (null,'Road','R',0,0.5);`
@@ -87,6 +76,9 @@ const db_ops = {
     selectSaves: db.prepare(
         "select * from save_games;"
     ),
+    selectUserSaves: db.prepare(
+        "select * from save_games where user_id = ?;"
+    ),
     deleteSave: db.prepare(
         "delete from save_games where id = ?;"
     ),
@@ -96,7 +88,26 @@ const db_ops = {
     overwriteSave: db.prepare(
         "update save_games set save_data = ? where name=? and user_id = ?;"
     ),
+    selectActiveSave :db.prepare(
+        "select save_data from save_games where name = ? and user_id = ?;"
+    ),
+    deleteBoard: db.prepare(
+        "drop table board;"
+    ),
+    createBoard: db.prepare(
+        "CREATE TABLE if not exists board (id integer primary key autoincrement,rowLen integer not null default 4);"
+    ),
+    insertRow: db.prepare(
+        "INSERT INTO board(rowLen) VALUES(?);"
+    ),
 };
+export function DeleteActiveSave(res){
+    res.cookie(ACTIVE_SAVE, "agemasen", {
+        maxAge: 0,
+        httpOnly: true,
+        secure: true,
+    });   
+}
 function boardTile(x, y) {
     var col = "col" + y.toString();
     const query = db.prepare(
@@ -134,8 +145,37 @@ export function ConvertBoardToSave(){
     }
     return save;
 }
-export function ConvertSaveToBoard(){
-    //
+export function ConvertSaveToBoard(req){
+    if(req.cookies.active_save != "NewSave"){
+        let save = db_ops.selectActiveSave.get(req.cookies.active_save,getSessionUser(req.cookies.ses_id));
+        let saveData = save.save_data.split(",");
+        db_ops.deleteBoard.get();
+        db_ops.createBoard.get();
+        for(let i=0;i<saveData.length;i++){
+            db_ops.insertRow.get(saveData[i].length);
+            if(i==0){
+                for(let j=1;j<=saveData[i].length;j++){
+                    let colName = "col"+j.toString();
+                    console.log(colName);
+                    const addCols = db.prepare(
+                        `ALTER TABLE board add column ${colName} TEXT NOT NULL default '0';`
+                    )
+                    addCols.get();
+                }
+            }
+        }
+        return getBoardData();
+    }
+    else{
+        //
+    }
+}
+export function selectSave(saveName,res){
+    res.cookie(ACTIVE_SAVE, saveName.toString(), {
+        maxAge: 60*60*24*7,
+        httpOnly: true,
+        secure: true,
+    });
 }
 export function validateBuilingTypeAndPosition(x, y, inputString) {
     if (parseInt(x) == 21 && parseInt(y) == 37) {
@@ -291,7 +331,16 @@ export function getSaves(){
     });
     return saves;
 }
+export function getUserSaves(id){
+    let saves = [];
+    let dbsaves = db_ops.selectUserSaves.all(id);
+    dbsaves.forEach(save =>{
+        saves.push([save.id,save.user_id,save.name,save.save_data]);
+    });
+    return saves;
+}
 export default {
     validateBuilingTypeAndPosition,
     getBoardData,
+    getUserSaves,
 };

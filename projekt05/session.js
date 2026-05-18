@@ -1,5 +1,6 @@
 import { DatabaseSync } from "node:sqlite";
 import { randomBytes } from "node:crypto";
+import { DeleteActiveSave } from "./data.js";
 const db_path = "./database.sqlite";
 const db = new DatabaseSync(db_path, { readBigInts: true });
 
@@ -27,7 +28,7 @@ const db_ops = {
     ),
 };
 
-export async function createSession(user, res) {
+export async function createSession(user, res, req) {
     let sessionId = randomBytes(8).readBigInt64BE();
     let createdAt = Date.now();
     let session = db_ops.create_session.get(sessionId, user, createdAt);
@@ -36,6 +37,7 @@ export async function createSession(user, res) {
         httpOnly: true,
         secure: true,
     });
+    DeleteActiveSave(res);
     console.log("session_created");
     return session;
 }

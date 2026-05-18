@@ -1,7 +1,8 @@
 <%- include("header.ejs") %><br>
-<% if (saveNameGet(req.cookies.ses_id) != null) { %>
-Name: <%= saveNameGet(req.cookies.ses_id) %>
+<% if (req.cookies.active_save) { %>
+Name: <%= req.cookies.active_save %>
 <% } %>
+<% if (board) { %>
 <table>
     <tbody>
       <% board.forEach((row, rowIndex) => { %>
@@ -13,9 +14,19 @@ Name: <%= saveNameGet(req.cookies.ses_id) %>
       <% }) %>
     </tbody>
   </table>
+
 <%- include("addBuilding.ejs") %>
 <%- include("removeBuilding.ejs") %>
 <%- include("increseBoardSize.ejs") %>
 <%- include("name_save.ejs") %>
+<% }else{ %>
+    <form action="select-save" method="POST">
+        <h3>Select save</h3>
+        <% if(saves.length > 0){ saves.forEach((save) => { %>
+            <button name="saveName" value="<%= save[2]%>"><%= save[2]%></button>
+        <%})} %>
+        <button name="saveName" value="NewSave">New Save</button>
+    </form>
+<% }%>
 </body>
 </html>
