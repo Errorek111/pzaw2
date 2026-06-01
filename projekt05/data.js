@@ -1,5 +1,5 @@
 import { DatabaseSync } from "node:sqlite";
-import user, { createUser, GetAciveSave, SetAciveSave } from "./user.js";
+import user, { createUser, GetAciveSave, SetAciveSave,sessionUserById } from "./user.js";
 import { getSessionUser } from "./session.js";
 const db_path = "./database.sqlite";
 const db = new DatabaseSync(db_path);
@@ -145,9 +145,9 @@ export function ConvertBoardToSave(){
     }
     return save;
 }
-export function ConvertSaveToBoard(req){
-    if(req.cookies.active_save != "NewSave"){
-        let save = db_ops.selectActiveSave.get(req.cookies.active_save,getSessionUser(req.cookies.ses_id));
+export function ConvertSaveToBoard(name,req){
+    if(name != "NewSave"){
+        let save = db_ops.selectActiveSave.get(name,getSessionUser(req.cookies.ses_id));
         let saveData = save.save_data.split(",");
         db_ops.deleteBoard.get();
         db_ops.createBoard.get();
@@ -156,11 +156,21 @@ export function ConvertSaveToBoard(req){
             if(i==0){
                 for(let j=1;j<=saveData[i].length;j++){
                     let colName = "col"+j.toString();
-                    console.log(colName);
                     const addCols = db.prepare(
                         `ALTER TABLE board add column ${colName} TEXT NOT NULL default '0';`
                     )
                     addCols.get();
+                }
+            }
+        }
+        for(let i=0;i<saveData.length;i++){
+            for(let j=1;j<=saveData[i].length;j++){
+                if(saveData[i][j-1] != "0"){
+                    var colName = "col" + j.toString();
+                    const addBld = db.prepare(
+                        `UPDATE board SET ${colName} = ? WHERE id = ?`
+                    )
+                    addBld.all(saveData[i][j-1], parseInt(i+1)); 
                 }
             }
         }
@@ -182,15 +192,15 @@ export function ConvertSaveToBoard(req){
                 }
             }
         }
-        return getBoardData();
     }
 }
-export function selectSave(saveName,res){
+export function selectSave(saveName,res,req){
     res.cookie(ACTIVE_SAVE, saveName.toString(), {
         maxAge: 60*60*24*7,
         httpOnly: true,
         secure: true,
     });
+    return saveName;
 }
 export function validateBuilingTypeAndPosition(x, y, inputString) {
     if (parseInt(x) == 21 && parseInt(y) == 37) {
@@ -321,11 +331,10 @@ export function increseBoardSize() {
     addRow.all();
     addCols.all();
 }
-export function setSaveName(save_name, id,res){
-    if(save_name == "" && GetAciveSave(id) != null){
-        let activeSave = GetAciveSave(id);
-        console.log(activeSave);
-        db_ops.overwriteSave.get(ConvertBoardToSave(),activeSave,id)
+export function setSaveName(save_name, id,res,req){
+    if(save_name == "" && req.cookies.active_save != null){
+        let name = req.cookies.active_save;
+        db_ops.overwriteSave.get(ConvertBoardToSave(),name,id)
     }
     else if(save_name != ""){
         db_ops.newSave.get(save_name,id,ConvertBoardToSave());

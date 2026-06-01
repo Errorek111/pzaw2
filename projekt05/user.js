@@ -47,18 +47,22 @@ const db_ops = {
         "select role from users where id = ?;"
     ),
     getActiveSave: db.prepare(
-        "select active_save from users where id = ?;"
+        "select active_save from users join save_games on save_games.user_id = users.id where users.id = ? and save_games.name = ?;"
     ),
     setActiveSave: db.prepare(
         "update users set active_save = ? where id =?;"
     ),
 }
-export function GetAciveSave(id){
-    let save = db_ops.getActiveSave.all(id);
+export function GetAciveSave(id,name){
+    let save = db_ops.getActiveSave.all(id,name);
+    console.log(save);
     return save[0]["active_save"];
 }
 export function SetAciveSave(save,id){
-    return db_ops.setActiveSave.get(save,id);
+    const query = db.prepare(
+        `update users set active_save = '${save}' where id = ?;`
+    )
+    query.all(id);
 }
 export async function verifyLogin(username, password, res, req) {
     let errors = [];

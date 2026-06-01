@@ -40,7 +40,7 @@ app.get("/", (req, res) =>{
         let board;
         let saves = getUserSaves(getSessionUser(req.cookies.ses_id));
         if(req.cookies.active_save){
-            board = ConvertSaveToBoard(req);
+            board = getBoardData();
         }
         res.render("main-page",{
             saveNameGet,
@@ -54,8 +54,8 @@ app.get("/", (req, res) =>{
         res.redirect("/login");
     }
 });
-app.post("/select-save", (req,res) =>{
-    selectSave(req.body.saveName,res);
+app.post("/select-save", (req,res) =>{ 
+    ConvertSaveToBoard(selectSave(req.body.saveName,res,req),req);
     res.redirect("/");
 });
 app.get("/login", (req,res)=>{
@@ -139,7 +139,7 @@ app.get("/add-space", (req,res) =>{
     res.redirect("/");
 });
 app.post("/save_name", (req,res) =>{
-    setSaveName(req.body.save_name,getSessionUser(req.cookies.ses_id),res);
+    setSaveName(req.body.save_name,getSessionUser(req.cookies.ses_id),res,req);
     res.redirect("/");
 });
 app.get("/about", (req, res) =>{
