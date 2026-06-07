@@ -29,31 +29,6 @@ create table if not exists save_games (
 );`
     //rule_building_id może nie mieć sensu w nazwie ale służy do rozpoznania budynku z którym zasada jest związana np większośc budynków musi być obok ulicy
 );
-if (process.env.CREATE_STARTING_DATA) {
-    console.log("tworzenie startowych danych");
-    const addBuildings = db.prepare(
-        `INSERT INTO buildings VALUES (null,'House','H',4.5,2.5),
-    (null,'Road','R',0,0.5);`
-    )
-    addBuildings.all();
-
-    const createBuildingRules = db.prepare(
-        `INSERT INTO placement_rules VALUES(null,1,'must_be_next_to',2);`
-    )
-    //bezpieczne hasła
-    let users = [['admin','1234567890'],['john','qwerty'],['joe','ytrewq']];
-    for(const newUser of users){
-        await createUser(newUser[0],newUser[1]);
-    }
-    const adminPriveleges = db.prepare(
-        `update users set role = 'admin' where username = 'admin';`
-    )
-    adminPriveleges.run();
-    createBuildingRules.all();
-    console.log("User1: \n username: admin \n password: 1234567890 \n role: admin \n");
-    console.log("User2: \n username: john \n password: qwerty \n role: user \n");
-    console.log("User3: \n username: joe \n password: ytrewq \n role: user \n");
-}
 const db_ops = {
     get_board: db.prepare(
         `SELECT * FROM board;`
