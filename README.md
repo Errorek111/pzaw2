@@ -1,27 +1,243 @@
-projekt05: 
+# Projekt 05
 
-    -pobrać biblioteki ejs, express, morgan, cookie-parser i argon2 z użyciem komendy npm install
-    -stworzyć plik database.sqlite w folderze projekt03/index.js
-    -w konsoli użyć komendy npm run generate_env
-    -uruchomić serwer z folderu pzaw2/projekt04 przy użyciu komendy npm run dev podczas pierwszego uruchomienia należy na początku komendy dodać parametr -CREATE_STARTING_DATA=1 (CREATE_STARTING_DATA=1 npm run dev); generuje on podstawowe dane do gry i 3 przykładowe konta użytkowników w tym 1 administratora
-    -w przeglądarce wejść na localhost:2137/ ; przed logowaniem serwer przekieruje do ścieżki /login
-    -należy się zalogować; można zrobić nowe konto i potem się na nie zalogować
-    -po zalogowaniu strona prziekieruje na stronę główną gdzie:
-        -górny link ( Ciemmy|Jasny ) po kliknięciu zmiena motyw (aktualnie jest to background z białego na szary)
-        -link HELLO (nazwa użytkownika) po kliknięciu prowadzi do panelu użytkownika gdzie:
-            -można wrócić na stronę główną (Main page)
-            -wylogować się
-            -jeżeli użytkownik jest administatorem (dane startowe tworzą użytkownika admin) widać link do panelu zarządania użytkownikami (aktualnie tylko ich zapisanymi grami) gdzie:
-                -jeżeli nie ma żadnych zapisów serwer wypisze wiadomośc że w bazie nie ma zapisów; jak są to zostanie wyświetlony nazwa i użytkownik każdego i obok każdego przycisk który usuwa dany wpis przy wciśnięciu
-        -jeżeli użytkownik ma wybrany zapis gry to wyświetli się jego nazwa 
-        -użytkownik dostaje opcje wyboru zapisu gry lub stworzenia nowego zapisu; bez wybrania żadnej opcji nie ma on dostępu do reszty strony
-        -przy użyciu pól tekstowych można:
-            -dodać budynki na planszy; puste pola to 0 budynki to litery;
-            -usunąć lub zastąpić budynek na polu; rzeby zastąpić budynek trzeba wpisać nazwę budynku który chcemy na polu postawić żeby usunąc należy wpisać 0
-        -przycisk z tekstem submit w sekcji dodaj przestrzeń dodaje 1 rząd i 1 kolumnę do planszy (zmienia rozmiar np. 4x4 na 5x5)
-        -przy  wpisywaniu pola na planszy X to rząd a Y to miejsce od lewej w rzędzie, obie liczby są indexowane od 1 (pierwszy rząd pierwsze miejsce od lewej to (1,1))
-        -w polu tekstowym pod tekstem Nazwa save'a można dodać nowy zapis wpisując nazwe lub nadpisać aktualny zapis zostawiając pole puste; przy tworzeniu nowego napisu użytkownik będzię musiał ponownie wybrać zapis;
-        -Nazwy budynków to nazwa po angielsku rozpoczęta wielką literą np. House, aktualnie są 2: House i Road 
-        -każdy budynek ma przypisaną dużą literkę (aktualnie jest to pierwsza literka słowa) która pokaże się w odpowiednim miejscu na plaszy o ile dane były podane
-        -w przypadku podania niepoprawnych danych serwer wypisze błąd i poprosi o ponowne wpisanie danych
-    pod scieżką /about jest krótki opis i powrót to strony głównej (od wersji 2 nic się nie zmieniło)
+## Instalacja
+
+1. Zainstaluj wymagane biblioteki:
+
+```bash
+npm install ejs express morgan cookie-parser argon2
+```
+
+2. Utwórz plik:
+
+```text
+database.sqlite
+```
+
+w folderze:
+
+```text
+projekt03/
+```
+
+(obok pliku `index.js`).
+
+3. W konsoli uruchom:
+
+```bash
+npm run generate_env
+```
+
+4. Uruchom serwer z folderu `pzaw2/projekt04`.
+
+Przy pierwszym uruchomieniu należy wygenerować dane startowe:
+
+```bash
+CREATE_STARTING_DATA=1 npm run dev
+```
+
+Komenda tworzy podstawowe dane do gry oraz 3 przykładowe konta
+użytkowników, w tym 1 konto administratora.
+
+Przy kolejnych uruchomieniach wystarczy:
+
+```bash
+npm run dev
+```
+
+---
+
+## Logowanie
+
+1. Otwórz przeglądarkę i przejdź pod adres:
+
+```text
+http://localhost:2137/
+```
+
+2. Przed zalogowaniem serwer automatycznie przekieruje użytkownika na:
+
+```text
+/login
+```
+
+3. Zaloguj się na istniejące konto lub utwórz nowe konto i zaloguj się.
+
+4. Po zalogowaniu użytkownik zostanie przekierowany na stronę główną.
+
+---
+
+## Strona główna
+
+### Zmiana motywu
+
+Link:
+
+```text
+Ciemny | Jasny
+```
+
+po kliknięciu zmienia motyw strony
+(obecnie zmienia kolor tła z białego na szary i odwrotnie).
+
+### Panel użytkownika
+
+Link:
+
+```text
+HELLO <nazwa_użytkownika>
+```
+
+prowadzi do panelu użytkownika, gdzie można:
+
+* wrócić na stronę główną (`Main page`),
+* wylogować się.
+
+### Panel administratora
+
+Jeżeli użytkownik posiada uprawnienia administratora
+(przykładowe konto administratora jest tworzone podczas generowania danych
+startowych), widoczny jest dodatkowy link do panelu zarządzania użytkownikami.
+
+Panel umożliwia:
+
+* przegląd zapisanych gier użytkowników,
+* usuwanie zapisów gier.
+
+Jeżeli w bazie nie ma żadnych zapisów, wyświetlana jest odpowiednia informacja.
+W przeciwnym przypadku wyświetlana jest nazwa zapisu oraz właściciel,
+a obok znajduje się przycisk usuwania.
+
+---
+
+## Wybór zapisu gry
+
+Jeżeli użytkownik ma wybrany zapis gry, jego nazwa jest wyświetlana
+na stronie głównej.
+
+Użytkownik może:
+
+* wybrać istniejący zapis gry,
+* utworzyć nowy zapis gry.
+
+Dopóki żaden zapis nie zostanie wybrany, pozostałe funkcje strony
+są niedostępne.
+
+---
+
+## Zarządzanie planszą
+
+Przy użyciu pól tekstowych można:
+
+* dodawać budynki na planszę,
+* usuwać budynki,
+* zastępować istniejące budynki innymi.
+
+### Zasady
+
+* Puste pole oznaczone jest jako `0`.
+* Budynki oznaczone są pojedynczymi literami.
+* Aby usunąć budynek, wpisz:
+
+```text
+0
+```
+
+* Aby zastąpić budynek, wpisz nazwę budynku, który ma zostać postawiony
+  na danym polu.
+
+### Dodawanie przestrzeni
+
+Przycisk:
+
+```text
+Submit
+```
+
+w sekcji „Dodaj przestrzeń” zwiększa rozmiar planszy o jeden wiersz
+i jedną kolumnę.
+
+Przykład:
+
+```text
+4x4 → 5x5
+```
+
+---
+
+## Współrzędne planszy
+
+Podczas wskazywania pola:
+
+* `X` oznacza numer wiersza,
+* `Y` oznacza pozycję od lewej strony w wierszu.
+
+Obie wartości są indeksowane od `1`.
+
+Przykład:
+
+```text
+(1,1)
+```
+
+oznacza pierwsze pole w pierwszym wierszu.
+
+---
+
+## Zapisywanie gry
+
+W polu znajdującym się pod napisem:
+
+```text
+Nazwa save'a
+```
+
+można:
+
+### Utworzyć nowy zapis
+
+Wpisz nazwę nowego zapisu.
+
+### Nadpisać aktualny zapis
+
+Pozostaw pole puste.
+
+Po utworzeniu nowego zapisu użytkownik będzie musiał ponownie wybrać zapis
+gry z listy.
+
+---
+
+## Budynki
+
+Nazwy budynków należy podawać po angielsku, rozpoczynając je wielką literą.
+
+Przykłady:
+
+* `House`
+* `Road`
+
+Każdy budynek posiada przypisaną wielką literę
+(obecnie jest to pierwsza litera nazwy budynku),
+która pojawia się na planszy w odpowiednim miejscu.
+
+---
+
+## Obsługa błędów
+
+W przypadku podania niepoprawnych danych serwer wyświetli komunikat błędu
+i poprosi użytkownika o ponowne wprowadzenie danych.
+
+---
+
+## Strona About
+
+Pod adresem:
+
+```text
+/about
+```
+
+znajduje się krótki opis projektu oraz link umożliwiający powrót
+na stronę główną.
+
+Od wersji 2 zawartość tej strony nie uległa zmianie.
