@@ -17,7 +17,7 @@ database.sqlite
 w folderze:
 
 ```text
-projekt03/
+projekt05/
 ```
 
 (obok pliku `index.js`).
