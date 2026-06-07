@@ -2,25 +2,18 @@
 
 ## Instalacja
 
-1. Zainstaluj wymagane biblioteki:
+1.Wejdź do folderu:
+
+``` bash
+pzaw2/projekt05
+```
+
+2. Zainstaluj wymagane biblioteki:
 
 ```bash
 npm install ejs express morgan cookie-parser argon2
 ```
 
-2. Utwórz plik:
-
-```text
-database.sqlite
-```
-
-w folderze:
-
-```text
-projekt05/
-```
-
-(obok pliku `index.js`).
 
 3. W konsoli uruchom:
 
@@ -28,18 +21,18 @@ projekt05/
 npm run generate_env
 ```
 
-4. Uruchom serwer z folderu `pzaw2/projekt04`.
+4. Uruchom serwer:
 
 Przy pierwszym uruchomieniu należy wygenerować dane startowe:
 
 ```bash
-CREATE_STARTING_DATA=1 npm run dev
+npm run create-server-data
 ```
 
-Komenda tworzy podstawowe dane do gry oraz 3 przykładowe konta
-użytkowników, w tym 1 konto administratora.
+Komenda tworzy baze danych i podstawowe dane do gry oraz 3 przykładowe konta
+użytkowników, w tym 1 konto administratora, informacje do logowania znajdą się w konsoli.
 
-Przy kolejnych uruchomieniach wystarczy:
+Przy kolejnych uruchomieniach należy użyć:
 
 ```bash
 npm run dev
