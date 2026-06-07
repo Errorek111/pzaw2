@@ -3,7 +3,7 @@
 <% if (saves.length > 0 ) { %>
   <% saves.forEach(save => { %>
     <form method="POST" action="/delete-save">
-      <input type="hidden" name="id" value="<%= save.id %>">
+      <input type="hidden" name="id" value="<%= save[0] %>">
       
       <span>
         <strong>save name: <%= save[2] %></strong> (username: <%= sessionUserById(save[1]) %>)

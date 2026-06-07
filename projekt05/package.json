@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "node --watch --env-file .env index.js",
-    "generate_env": "./generate_env.sh > .env"
+    "generate_env": "./generate_env.sh > .env",
+    "create-server-data": "touch database.sqlite; CREATE_STARTING_DATA=1 npm run dev"
   },
   "keywords": [],
   "author": "",

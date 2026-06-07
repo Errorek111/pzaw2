@@ -50,6 +50,9 @@ if (process.env.CREATE_STARTING_DATA) {
     )
     adminPriveleges.run();
     createBuildingRules.all();
+    console.log("User1: \n username: admin \n password: 1234567890 \n role: admin \n");
+    console.log("User2: \n username: john \n password: qwerty \n role: user \n");
+    console.log("User3: \n username: joe \n password: ytrewq \n role: user \n");
 }
 const db_ops = {
     get_board: db.prepare(
