@@ -137,7 +137,7 @@ Przy użyciu pól tekstowych można:
 ```
 
 * Aby zastąpić budynek, wpisz nazwę budynku, który ma zostać postawiony
-  na danym polu.
+  na danym polu. 
 
 ### Dodawanie przestrzeni
 
@@ -204,7 +204,7 @@ gry z listy.
 
 Nazwy budynków należy podawać po angielsku, rozpoczynając je wielką literą.
 
-Przykłady:
+Dostępne budynki:
 
 * `House`
 * `Road`
@@ -233,4 +233,3 @@ Pod adresem:
 znajduje się krótki opis projektu oraz link umożliwiający powrót
 na stronę główną.
 
-Od wersji 2 zawartość tej strony nie uległa zmianie.
