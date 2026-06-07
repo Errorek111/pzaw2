@@ -11,7 +11,7 @@ pzaw2/projekt05
 2. Zainstaluj wymagane biblioteki:
 
 ```bash
-npm install ejs express morgan cookie-parser argon2
+npm run install
 ```
 
 
@@ -21,9 +21,9 @@ npm install ejs express morgan cookie-parser argon2
 npm run generate_env
 ```
 
-4. Uruchom serwer:
+4. Stwóż bazę danych i dodaj dane testowe:
 
-Przy pierwszym uruchomieniu należy wygenerować dane startowe:
+W konsoli uruchom
 
 ```bash
 npm run create-server-data
@@ -32,7 +32,7 @@ npm run create-server-data
 Komenda tworzy baze danych i podstawowe dane do gry oraz 3 przykładowe konta
 użytkowników, w tym 1 konto administratora, informacje do logowania znajdą się w konsoli.
 
-Przy kolejnych uruchomieniach należy użyć:
+5.Uruchom serwer za pomocą komendy: 
 
 ```bash
 npm run dev
